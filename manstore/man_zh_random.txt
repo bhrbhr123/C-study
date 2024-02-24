@@ -1,0 +1,92 @@
+RANDOM(3) Linux 程序员手册 RANDOM(3)
+
+姓名
+random, srandom, initstate, setstate - 随机数生成器
+
+概要
+#include <stdlib.h>
+
+长随机（无效）；
+
+void srandom(无符号种子);
+
+char *initstate(无符号种子, char *state, size_t n);
+
+char *setstate(char *state);
+
+glibc 的功能测试宏要求（请参阅 feature_test_macros(7)）：
+
+随机（），srandom（），initstate（），setstate（）：
+_XOPEN_SOURCE >= 500
+|| /* Glibc 自 2.19 起: */ _DEFAULT_SOURCE
+|| /* Glibc 版本 <= 2.19: */ _SVID_SOURCE || _BSD_源
+
+描述
+random() 函数使用非线性加性反馈随机数生成器，该生成器采用大小为 31 的默认表
+长整数返回 0 到 2^31 - 1 范围内的连续伪随机数。此随机数的周期
+数字生成器非常大，大约为 16 * ((2^31) - 1)。
+
+srandom() 函数将其参数设置为由 ran 返回的新伪随机整数序列的种子
+dom()。通过使用相同的种子值调用 srandom() 可以重复这些序列。如果未提供种子值，则
+random() 函数自动使用值 1 进行播种。
+
+initstate() 函数允许初始化状态数组 state 以供 random() 使用。状态数组的大小
+n 由 initstate() 用来决定应该使用多么复杂的随机数生成器——状态数组越大，
+随机数越好。状态数组 n 大小的当前“最佳”值为 8、32、64、128、
+和 256 字节；其他金额将四舍五入至最接近的已知金额。使用少于 8 个字节会导致
+错误。seed 是初始化的种子，它指定随机数序列的起点，并且
+规定在同一点重新启动。
+
+setstate() 函数更改 random() 函数使用的状态数组。状态数组state用于随机
+数字生成直到下一次调用 initstate() 或 setstate()。状态必须首先使用 init 进行初始化
+state() 或之前调用 setstate() 的结果。
+
+返回值
+random() 函数返回 0 到 (2^31) - 1 之间的值。srandom() 函数不返回任何值。
+
+initstate() 函数返回一个指向前一个状态数组的指针。出现错误时，会设置 errno 来指示原因。
+
+成功时，setstate() 返回指向前一个状态数组的指针。出错时，它返回 NULL，并将 errno 设置为 in-
+指出错误的原因。
+
+错误
+EINVAL 赋予 setstate() 的状态参数为 NULL。
+
+EINVAL 为 initstate() 指定了小于 8 字节的状态数组。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌────────────────────────┬────────────────┬──────── ─┐
+│接口 │属性 │值 │
+├────────────────────────┼────────────────┼──────── ─┤
+│random(), srandom(), │ 线程安全 │ MT-Safe │
+│initstate()、setstate() │ │ │
+└────────────────────────┴────────────────┴──────── ─┘
+符合
+POSIX.1-2001、POSIX.1-2008、4.3BSD。
+
+笔记
+random() 函数不应在需要可重现行为的多线程程序中使用。使用跑-
+dom_r(3) 用于此目的。
+
+随机数生成是一个复杂的主题。C 语言的数值秘诀：科学计算的艺术（William H. Press，
+Brian P. Flannery、Saul A. Teukolsky、William T. Vetterling；纽约：剑桥大学出版社，2007 年，第 3 版）pro‐
+在第 7 章（随机数）中对实际随机数生成问题进行了精彩的讨论。
+
+有关更深入的理论讨论（也涵盖了许多实际问题），请参阅第 3 章（随机数）
+Donald E. Knuth 的《计算机编程艺术》，第 2 卷（半数值算法），第 2 版；马萨诸塞州雷丁：
+艾迪生韦斯利出版公司，1981。
+
+错误
+根据 POSIX，initstate() 出错时应返回 NULL。在 glibc 实现中，errno（按照指定）设置
+出错，但该函数不返回 NULL。
+
+也可以看看
+getrandom(2)、drand48(3)、rand(3)、random_r(3)、srand(3)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。项目描述、有关重新设计的信息
+移植错误以及本页面的最新版本可以在 https://www.kernel.org/doc/man-pages/ 找到。
+
+GNU 2020-11-01 随机(3)
