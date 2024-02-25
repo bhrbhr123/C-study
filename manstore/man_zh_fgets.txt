@@ -1,0 +1,74 @@
+FGETC(3) Linux 程序员手册 FGETC(3)
+
+姓名
+fgetc、fgets、getc、getchar、ungetc - 字符和字符串的输入
+
+概要
+#include <stdio.h>
+
+int fgetc(FILE *流);
+
+char *fgets(char *s, int size, FILE *stream);
+
+int getc(FILE *流);
+
+int getchar(void);
+
+int ungetc(int c, FILE *stream);
+
+描述
+fgetc() 从流中读取下一个字符并将其作为 unsigned char 转换为 int 或结尾返回 EOF
+文件或错误。
+
+getc() 与 fgetc() 等效，只是它可以作为宏来实现，该宏对流的求值超过
+一次。
+
+getchar() 相当于 getc(stdin)。
+
+fgets() 从流中最多读取一个小于 size 的字符并将它们存储到指向的缓冲区中
+由 s. 读取在 EOF 或换行符后停止。如果读取换行符，则将其存储到缓冲区中。一个术语
+空字节（'\0'）存储在缓冲区中最后一个字符之后。
+
+ungetc() 将 c 推回流，转换为 unsigned char，可用于后续读取操作。
+推回的字符将以相反的顺序返回；仅保证一次推回。
+
+对此处描述的函数的调用可以相互混合，也可以与对其他输入函数的调用混合
+来自 stdio 库的相同输入流。
+
+对于非锁定对应项，请参阅unlocked_stdio(3)。
+
+返回值
+fgetc()、getc() 和 getchar() 返回作为 unsigned char 读取的字符，并在末尾强制转换为 int 或 EOF
+文件或错误。
+
+fgets() 成功时返回 s，出错时或在未读取字符的情况下发生文件末尾时返回 NULL。
+
+ungetc() 成功时返回 c，出错时返回 EOF。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌──────────────────────────┬────────────────┬────── ────┐
+│接口 │属性 │值 │
+├──────────────────────────┼────────────────┼────── ────┤
+│fgetc(), fgets(), getc(), │ 线程安全 │ MT 安全 │
+│getchar(), ungetc() │ │ │
+└──────────────────────────┴────────────────┴────── ────┘
+
+符合
+POSIX.1-2001、POSIX.1-2008、C89、C99。
+
+不建议将对 stdio 库的输入函数的调用与对 read(2) 的低级调用混合使用
+与输入流关联的文件描述符；结果将是不确定的，很可能不是
+你要。
+
+也可以看看
+读（2），写（2），ferror（3），fgetwc（3），fgetws（3），fopen（3），fread（3），fseek（3），getline（3），gets（3），
+getwchar(3)、puts(3)、scanf(3)、ungetwc(3)、unlocked_stdio(3)、feature_test_macros(7)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。项目描述、信息
+关于报告错误以及此页面的最新版本，可以在以下位置找到
+https://www.kernel.org/doc/man-pages/。
+
+GNU 2020-12-21 FGETC(3)
