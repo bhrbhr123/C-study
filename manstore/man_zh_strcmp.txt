@@ -1,0 +1,126 @@
+STRCMP(3) Linux 程序员手册 STRCMP(3)
+
+姓名
+strcmp、strncmp - 比较两个字符串
+
+概要
+#include <字符串.h>
+
+int strcmp(const char *s1, const char *s2);
+
+int strncmp(const char *s1, const char *s2, size_t n);
+
+描述
+strcmp() 函数比较两个字符串 s1 和 s2。不考虑区域设置（对于区域设置
+有意识的比较，请参阅 strcoll(3))。比较是使用无符号字符完成的。
+
+strcmp() 返回一个整数，表示比较结果，如下：
+
+• 0，如果s1 和s2 相等；
+
+• 如果s1 小于s2，则为负值；
+
+• 如果s1 大于s2，则为正值。
+
+strncmp() 函数类似，只是它仅比较 s1 和 s2 的前（最多）n 个字节。
+
+返回值
+如果 s1 （或
+发现其前n个字节分别小于、匹配或大于s2。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌────────────────────┬────────────────┬──────────┐
+│接口 │属性 │值 │
+├────────────────────┼────────────────┼──────────┤
+│strcmp(), strncmp() │ 线程安全 │ MT-Safe │
+└────────────────────┴────────────────┴──────────┘
+符合
+POSIX.1-2001、POSIX.1-2008、C89、C99、SVr4、4.3BSD。
+
+笔记
+POSIX.1 仅指定：
+
+非零返回值的符号应由值之间的差值的符号确定
+第一对字节（均解释为 unsigned char 类型）的字符串不同
+比较的。
+
+在 glibc 中，与大多数其他实现一样，返回值是减去最后一个的算术结果
+s2 中的字节与 s1 中最后一个比较的字节进行比较。（如果两个字符相等，则差异为
+0.)
+
+例子
+下面的程序可用于演示 strcmp() 的操作（当给定两个参数时）和
+strnmp() （当给出三个参数时）。首先，一些使用 strcmp() 的示例：
+
+$ ./string_comp ABC ABC
+<str1> 和 <str2> 相等
+$ ./string_comp ABC AB # 'C' 是 ASCII 67；'C' - ' ' = 67
+<str1> 大于 <str2> (67)
+$ ./string_comp ABA ABZ # 'A' 是 ASCII 65；“Z”是 ASCII 90
+<str1> 小于 <str2> (-25)
+$ ./string_comp ABJ ABC
+<str1> 大于 <str2> (7)
+$ ./string_comp $'\201' A # 0201 - 0101 = 0100（或十进制 64）
+<str1> 大于 <str2> (64)
+
+最后一个示例使用 bash(1) 特定的语法来生成包含 8 位 ASCII 代码的字符串；结果
+演示字符串比较使用无符号字符。
+
+然后是一些使用 strncmp() 的示例：
+
+$ ./string_comp ABC AB 3
+<str1> 大于 <str2> (67)
+$ ./string_comp ABC AB 2
+<str1> 和 <str2> 的前 2 个字节相等
+
+节目来源
+
+/* string_comp.c
+
+根据 GNU 通用公共许可证 v2 或更高版本获得许可。
+*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <字符串.h>
+
+整数
+main(int argc, char *argv[])
+{
+内部资源；
+
+if (argc < 3) {
+fprintf(stderr, "用法: %s <str1> <str2> [<len>]\n", argv[0]);
+退出（EXIT_FAILURE）；
+}
+
+if (argc == 3)
+res = strcmp(argv[1], argv[2]);
+别的
+res = strncmp(argv[1], argv[2], atoi(argv[3]));
+
+if (res == 0) {
+printf("<str1> 和 <str2> 相等");
+如果（参数 > 3）
+printf(" 在前 %d 个字节\n", atoi(argv[3]));
+printf("\n");
+} 否则如果 (res < 0) {
+printf("<str1> 小于 <str2> (%d)\n", res);
+} 别的 {
+printf("<str1> 大于 <str2> (%d)\n", res);
+}
+
+退出（EXIT_SUCCESS）；
+}
+
+也可以看看
+bcmp(3)、memcmp(3)、strcasecmp(3)、strcoll(3)、string(3)、strncasecmp(3)、strverscmp(3)、wcscmp(3)、wc‐
+sncmp(3)、ascii(7)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。项目描述、信息
+关于报告错误以及此页面的最新版本，可以在以下位置找到
+https://www.kernel.org/doc/man-pages/。
+
+2020-04-11 STRCMP(3)

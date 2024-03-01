@@ -1,0 +1,111 @@
+STRCAT(3) Linux 程序员手册 STRCAT(3)
+
+姓名
+strcat、strncat - 连接两个字符串
+
+概要
+#include <字符串.h>
+
+char *strcat(char *dest, const char *src);
+
+char *strncat(char *dest, const char *src, size_t n);
+
+描述
+strcat() 函数将 src 字符串附加到 dest 字符串，覆盖终止空字节 ('\0')
+在 dest 的末尾，然后添加一个终止空字节。字符串不能重叠，并且目标字符串
+必须有足够的空间来容纳结果。如果 dest 不够大，程序行为是不可预测的；缓冲
+溢出是攻击安全程序最喜欢的途径。
+
+strncat() 函数类似，不同之处在于
+
+* 它将使用 src 中的最多 n 个字节；和
+
+* 如果 src 包含 n 个或更多字节，则不需要以 null 终止。
+
+与 strcat() 一样，dest 中的结果字符串始终以 null 结尾。
+
+如果 src 包含 n 个或更多字节，strncat() 会将 n+1 个字节写入 dest（src 中的 n 加上终止 null
+字节）。因此，dest 的大小必须至少为 strlen(dest)+n+1。
+
+strncat() 的一个简单实现可能是：
+
+字符*
+strncat(char *dest, const char *src, size_t n)
+{
+size_t dest_len = strlen(dest);
+大小_t i；
+
+for (i = 0 ; i < n && src[i] != '\0' ; i++)
+dest[dest_len + i] = src[i];
+dest[dest_len + i] = '\0';
+
+返回目的地；
+}
+
+返回值
+strcat() 和 strncat() 函数返回指向结果字符串 dest 的指针。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌────────────────────┬────────────────┬──────────┐
+│接口 │属性 │值 │
+├────────────────────┼────────────────┼──────────┤
+│strcat(), strncat() │ 线程安全 │ MT-Safe │
+└────────────────────┴────────────────┴──────────┘
+符合
+POSIX.1-2001、POSIX.1-2008、C89、C99、SVr4、4.3BSD。
+
+笔记
+某些系统（BSD、Solaris 等）提供以下功能：
+
+size_t strlcat(char *dest, const char *src, size_t 大小);
+
+该函数将空终止字符串 src 附加到字符串 dest，最多复制 size-strlen(dest)-1
+来自 src，并向结果添加一个终止空字节，除非 size 小于 strlen(dest)。这个功能-
+修复了strcat()的缓冲区溢出问题，但调用者仍然必须处理数据的可能性
+如果尺寸太小会造成损失。该函数返回 strlcat() 尝试创建的字符串的长度；如果
+返回值大于或等于size，发生数据丢失。如果数据丢失很重要，调用者必须
+然后在调用之前检查参数，或测试函数返回值。strlcat() 不存在于
+glibc 并未由 POSIX 标准化，但可通过 libbsd 库在 Linux 上使用。
+
+例子
+因为 strcat() 和 strncat() 必须使用以下搜索找到终止字符串 dest 的空字节：
+从字符串的开头开始，这些函数的执行时间根据字符串的长度缩放
+字符串目标。这可以通过运行下面的程序来证明。（如果目标是连接许多
+字符串到一个目标，然后手动从每个源字符串复制字节，同时维护指向
+目标字符串的末尾将提供更好的性能。）
+
+节目来源
+
+#include <stdint.h>
+#include <字符串.h>
+#include <时间.h>
+#include <stdio.h>
+
+整数
+main(int argc, char *argv[])
+{
+#定义 LIM 4000000
+字符 p[LIM + 1]; /* +1 终止空字节 */
+time_t 基数；
+
+基数=时间(NULL);
+p[0] = '\0';
+
+for (int j = 0; j < LIM; j++) {
+如果（（j％10000）== 0）
+printf("%d %jd\n", j, (intmax_t) (时间(NULL) - 基数));
+strcat（p，“a”）；
+}
+}
+
+也可以看看
+bcopy(3)、memccpy(3)、memcpy(3)、strcpy(3)、字符串(3)、strncpy(3)、wcscat(3)、wcsncat(3)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。项目描述、信息
+关于报告错误以及此页面的最新版本，可以在以下位置找到
+https://www.kernel.org/doc/man-pages/。
+
+GNU 2020-11-01 STRCAT(3)

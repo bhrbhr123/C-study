@@ -1,0 +1,51 @@
+STRSTR(3) Linux 程序员手册 STRSTR(3)
+
+姓名
+strstr、strcasestr - 定位子字符串
+
+概要
+#include <字符串.h>
+
+char *strstr(const char *haystack, const char *needle);
+
+#define _GNU_SOURCE /* 参见 feature_test_macros(7) */
+
+#include <字符串.h>
+
+char *strcasestr(const char *haystack, const char *needle);
+
+描述
+strstr() 函数查找子字符串needle 在字符串干草堆中第一次出现的位置。术语
+不比较空字节 ('\0')。
+
+strcasestr() 函数类似于 strstr()，但忽略两个参数的大小写。
+
+返回值
+这些函数返回指向所定位子字符串开头的指针，如果子字符串不是，则返回 NULL
+成立。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌──────────────┬────────────────┬────────────────┐
+│接口 │属性 │值 │
+├──────────────┼────────────────┼──────────────┤
+│strstr() │ 线程安全 │ MT-Safe │
+├──────────────┼────────────────┼──────────────┤
+│strcasestr() │ 线程安全 │ MT 安全语言环境 │
+└──────────────┴────────────────┴────────────────┘
+符合
+strstr()：POSIX.1-2001、POSIX.1-2008、C89、C99。
+
+strcasestr() 函数是非标准扩展。
+
+也可以看看
+index(3)、memchr(3)、memmem(3)、rindex(3)、strcasecmp(3)、strchr(3)、string(3)、strpbrk(3)、strsep(3)、str‐
+spn(3)、strtok(3)、wcssstr(3)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。项目描述、信息
+关于报告错误以及此页面的最新版本，可以在以下位置找到
+https://www.kernel.org/doc/man-pages/。
+
+GNU 2019-03-06 STRSTR(3)

@@ -1,0 +1,62 @@
+ATOI(3) Linux 程序员手册 ATOI(3)
+
+姓名
+atoi, atol, atoll - 将字符串转换为整数
+
+概要
+#include <stdlib.h>
+
+int atoi(const char *nptr);
+长 atol(const char *nptr);
+长长环礁(const char *nptr);
+
+glibc 的功能测试宏要求（请参阅 feature_test_macros(7)）：
+
+环礁（）：
+_ISOC99_源||
+|| /* Glibc 版本 <= 2.19: */ _BSD_SOURCE || _SVID_来源
+
+描述
+atoi() 函数将 nptr 指向的字符串的初始部分转换为 int。该行为是
+与...一样
+
+strtol(nptr, NULL, 10);
+
+除了 atoi() 不检测错误之外。
+
+atol() 和 atoll() 函数的行为与 atoi() 相同，只是它们转换了初始部分
+其返回类型为 long 或 long long 的字符串。
+
+返回值
+转换后的值或错误时为 0。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌────────────────────────┬────────────────┬──────── ────────┐
+│接口 │属性 │值 │
+├────────────────────────┼────────────────┼──────── ────────┤
+│atoi(), atol(), atoll() │ 线程安全 │ MT 安全语言环境 │
+└────────────────────────┴────────────────┴──────── ────────┘
+符合
+POSIX.1-2001、POSIX.1-2008、C99、SVr4、4.3BSD。C89 和 POSIX.1-1996 包括函数 atoi() 和 atol()
+仅有的。
+
+笔记
+POSIX.1 未指定错误时 atoi() 的返回值。在 glibc、musl libc 和 uClibc 上，0 是重新值
+开启错误。
+
+错误
+错误时不会设置 errno，因此无法区分 0 作为错误和转换后的值。
+不检查溢出或下溢。只能转换以 10 为基数的输入。建议在-
+而是在新程序中使用 strtol() 和 strtoul() 系列函数。
+
+也可以看看
+atof(3)、strtod(3)、strtol(3)、strtoul(3)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。项目描述、信息
+关于报告错误以及此页面的最新版本，可以在以下位置找到
+https://www.kernel.org/doc/man-pages/。
+
+GNU 2020-08-13 ATOI(3)

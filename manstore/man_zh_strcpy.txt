@@ -1,0 +1,102 @@
+STRCPY(3) Linux 程序员手册 STRCPY(3)
+
+姓名
+strcpy、strncpy - 复制字符串
+
+概要
+#include <字符串.h>
+
+char *strcpy(char *dest, const char *src);
+
+char *strncpy(char *dest, const char *src, size_t n);
+
+描述
+strcpy() 函数将 src 指向的字符串（包括终止空字节（'\0'））复制到
+de指向的缓冲区。字符串不能重叠，并且目标字符串 dest 必须足够大
+接收副本。谨防缓冲区溢出！（参见错误。）
+
+strncpy() 函数类似，只不过最多复制 src 的 n 个字节。警告：如果没有
+src 的前 n 个字节中存在 null 字节，则放置在 dest 中的字符串不会以 null 结尾。
+
+如果 src 的长度小于 n，strncpy() 会向 dest 写入额外的空字节，以确保总共
+写入 n 个字节。
+
+strncpy() 的一个简单实现可能是：
+
+字符*
+strncpy(char *dest, const char *src, size_t n)
+{
+大小_t i；
+
+for (i = 0; i < n && src[i] != '\0'; i++)
+目标[i] = src[i];
+对于 (; i < n; i++)
+目标[i] = '\0';
+
+返回目的地；
+}
+
+返回值
+strcpy() 和 strncpy() 函数返回指向目标字符串 dest 的指针。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌────────────────────┬────────────────┬──────────┐
+│接口 │属性 │值 │
+├────────────────────┼────────────────┼──────────┤
+│strcpy(), strncpy() │ 线程安全 │ MT-Safe │
+└────────────────────┴────────────────┴──────────┘
+符合
+POSIX.1-2001、POSIX.1-2008、C89、C99、SVr4、4.3BSD。
+
+笔记
+一些程序员认为 strncpy() 效率低下且容易出错。如果程序员知道（即，在
+包括要测试的代码！）如果dest的大小大于src的长度，则可以使用strcpy()。
+
+strncpy() 的一种有效（也是预期）用途是将 C 字符串复制到固定长度缓冲区，同时确保
+缓冲区没有溢出，并且目标缓冲区中未使用的字节被清零（也许是为了
+如果缓冲区要写入介质或通过输入传输到另一个进程，则可以防止信息泄漏
+三进程通信技术）。
+
+如果 src 的前 n 个字节中没有终止空字节，则 strncpy() 会在
+目的地。如果 buf 具有长度 buflen，则可以使用类似以下内容强制终止：
+
+如果（buflen > 0）{
+strncpy(buf, str, buflen - 1);
+buf[buflen - 1]= '\0';
+}
+
+（当然，上述技术忽略了这样一个事实：如果 src 包含超过 buflen - 1 个字节，则信息
+在复制到目标时丢失。）
+
+strlcpy()
+某些系统（BSD、Solaris 等）提供以下功能：
+
+size_t strlcpy(char *dest, const char *src, size_t 大小);
+
+该函数与 strncpy() 类似，但它最多复制 size-1 个字节到 dest，总是添加一个终止符
+空字节，并且不会用（更多）空字节填充目标。此功能修复了一些问题
+strcpy() 和 strncpy() 的 lems，但如果大小太大，调用者仍然必须处理数据丢失的可能性
+小的。函数的返回值是 src 的长度，这样可以很容易地检测到截断：
+如果返回值大于或等于size，则发生截断。如果数据丢失很重要，
+调用者必须在调用之前检查参数，或测试函数返回值。strlcpy() 不是
+存在于 glibc 中，并未由 POSIX 标准化，但可通过 libbsd 库在 Linux 上使用。
+
+错误
+如果 strcpy() 的目标字符串不够大，则可能会发生任何情况。溢出固定-
+length string buffers 是一种最喜欢的破解技术，用于完全控制机器。任何时候
+程序将数据读取或复制到缓冲区中时，程序首先需要检查是否有足够的空间。这
+如果您可以证明溢出是不可能的，则可能没有必要，但要小心：程序可以更改
+时间，以可能使不可能成为可能的方式。
+
+也可以看看
+bcopy(3)、memccpy(3)、memcpy(3)、memmove(3)、stpcpy(3)、stpncpy(3)、strdup(3)、string(3)、wcscpy(3)、wc‐
+sncpy(3)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。项目描述、信息
+关于报告错误以及此页面的最新版本，可以在以下位置找到
+https://www.kernel.org/doc/man-pages/。
+
+GNU 2019-03-06 STRCPY(3)

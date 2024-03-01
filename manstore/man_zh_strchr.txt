@@ -1,0 +1,61 @@
+STRCHR(3) Linux 程序员手册 STRCHR(3)
+
+姓名
+strchr、strrchr、strchrnul - 在字符串中查找字符
+
+概要
+#include <字符串.h>
+
+char *strchr(const char *s, int c);
+
+char *strrchr(const char *s, int c);
+
+#define _GNU_SOURCE /* 参见 feature_test_macros(7) */
+#include <字符串.h>
+
+char *strchrnul(const char *s, int c);
+
+描述
+strchr() 函数返回一个指向字符 c 在字符串 s 中第一次出现的位置的指针。
+
+strrchr() 函数返回一个指向字符串 s 中最后一次出现的字符 c 的指针。
+
+strchrnul() 函数类似于 strchr()，只不过如果在 s 中找不到 c，则它返回一个指向
+s 末尾的空字节，而不是 NULL。
+
+这里“字符”的意思是“字节”；这些函数不适用于宽字符或多字节字符。
+
+返回值
+strchr() 和 strrchr() 函数返回指向匹配字符的指针，如果字符不是则返回 NULL
+成立。终止空字节被视为字符串的一部分，因此如果将 c 指定为 '\0'，则这些
+函数返回一个指向终止符的指针。
+
+strchrnul() 函数返回指向匹配字符的指针，或者指向末尾空字节的指针
+如果未找到该字符，则返回 s（即 s+strlen(s)）。
+
+版本
+strchrnul() 首次出现在 glibc 2.1.1 版本中。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌──────────────────────────────────┬──────────────── ┬──────────┐
+│接口 │属性 │值 │
+├──────────────────────────────────┼──────────────── ┼──────────┤
+│strchr(), strrchr(), strchrnul() │ 线程安全 │ MT 安全 │
+└──────────────────────────────────┴──────────────── ┴──────────┘
+符合
+strchr()、strrchr()：POSIX.1-2001、POSIX.1-2008、C89、C99、SVr4、4.3BSD。
+
+strchrnul() 是 GNU 扩展。
+
+也可以看看
+索引（3），memchr（3），rindex（3），字符串（3），strlen（3），strpbrk（3），strsep（3），strspn（3），strstr（3），strtok（3），
+wcschr(3)、wcsrchr(3)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。项目描述、信息
+关于报告错误以及此页面的最新版本，可以在以下位置找到
+https://www.kernel.org/doc/man-pages/。
+
+GNU 2019-03-06 STRCHR(3)

@@ -1,0 +1,137 @@
+MALLOC(3) Linux 程序员手册 MALLOC(3)
+
+姓名
+malloc、free、calloc、realloc、reallocarray - 分配和释放动态内存
+
+概要
+#include <stdlib.h>
+
+无效* malloc（size_t大小）；
+无效自由（无效* ptr）；
+void *calloc(size_t nmemb, size_t 大小);
+void *realloc(void *ptr, size_t 大小);
+void *reallocarray(void *ptr, size_t nmemb, size_t size);
+
+glibc 的功能测试宏要求（请参阅 feature_test_macros(7)）：
+
+重新分配数组（）：
+从 glibc 2.29 开始：
+_DEFAULT_SOURCE
+Glibc 2.28 及更早版本：
+_GNU_SOURCE
+
+描述
+malloc() 函数分配 size 字节并返回指向所分配内存的指针。记忆不是
+已初始化。如果 size 为 0，则 malloc() 返回 NULL，或者稍后可以使用的唯一指针值
+成功传递给 free()。
+
+free()函数释放ptr指向的内存空间，该空间必须由先前的调用返回
+到 malloc()、calloc() 或 realloc()。否则，或者如果 free(ptr) 之前已经被调用过，则 undefined 是
+行为发生。如果 ptr 为 NULL，则不执行任何操作。
+
+calloc() 函数为每个大小为字节的 nmemb 元素数组分配内存并返回一个指针
+到分配的内存。内存设置为零。如果 nmemb 或 size 为 0，则 calloc() 返回
+NULL，或稍后可以成功传递给 free() 的唯一指针值。如果乘以
+nmemb 和 size 会导致整数溢出，然后 calloc() 返回错误。相比之下，整数
+在以下对 malloc() 的调用中不会检测到溢出，结果是大小不正确
+将分配内存块：
+
+malloc(nmemb * 大小);
+
+realloc()函数将ptr指向的内存块的大小更改为size字节。内容
+从区域开始到新旧尺寸的最小值的范围内将保持不变。如果
+新大小大于旧大小，添加的内存不会被初始化。如果 ptr 为 NULL，则
+对于所有 size 值，调用相当于 malloc(size)；如果 size 等于 0，并且 ptr 不为 NULL，
+那么该调用相当于 free(ptr)。除非 ptr 为 NULL，否则它一定是由之前的调用返回的
+到 malloc()、calloc() 或 realloc()。如果指向的区域被移动，则完成 free(ptr)。
+
+reallocarray() 函数将 ptr 指向的内存块的大小更改为足够大
+nmemb 元素数组，每个元素都是 size 字节。相当于调用
+
+realloc(ptr, nmemb * 大小);
+
+然而，与 realloc() 调用不同，reallocarray() 在乘法将安全地失败的情况下
+溢出。如果发生此类溢出，reallocarray() 将返回 NULL，将 errno 设置为 ENOMEM，并保留原始值。
+最终内存块不变。
+
+返回值
+malloc() 和 calloc() 函数返回一个指向已分配内存的指针，该指针已适当对齐
+任何内置类型。出错时，这些函数返回 NULL。成功调用也可能返回 NULL
+malloc() 的大小为零，或者通过成功调用 calloc() 且 nmemb 或大小等于零。
+
+free() 函数不返回任何值。
+
+realloc() 函数返回一个指向新分配的内存的指针，该指针适合任何
+内置类型，如果请求失败则为 NULL。如果分配，返回的指针可能与 ptr 相同
+没有被移动（例如，有空间就地扩展分配），或者如果分配与 ptr 不同
+化已迁至新地址。如果 size 等于 0，则可以为 NULL 或适合传递给的指针
+返回 free()。如果 realloc() 失败，则原始块保持不变；它没有被释放或移动。
+
+成功时，reallocarray() 函数返回指向新分配的内存的指针。失败时，它会重新
+变为 NULL 并且原始内存块保持不变。
+
+错误
+calloc()、malloc()、realloc() 和 reallocarray() 可能会失败并出现以下错误：
+
+ENOMEM 内存不足。可能，应用程序达到了 getr- 中描述的 RLIMIT_AS 或 RLIMIT_DATA 限制。
+限制（2）。
+
+版本
+reallocarray() 首次出现在 glibc 2.26 版本中。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌──────────────────────┬────────────────┬──────────┐
+│接口 │属性 │值 │
+├──────────────────────┼────────────────┼──────────┤
+│malloc(), free(), │ 线程安全 │ MT-Safe │
+│calloc(), realloc() │ │ │
+└──────────────────────┴────────────────┴──────────┘
+符合
+malloc()、free()、calloc()、realloc()：POSIX.1-2001、POSIX.1-2008、C89、C99。
+
+reallocarray() 是一个非标准扩展，首次出现在 OpenBSD 5.6 和 FreeBSD 11.0 中。
+
+笔记
+默认情况下，Linux 遵循乐观的内存分配策略。这意味着当 malloc() 返回时
+非NULL不能保证内存确实可用。万一发现系统是
+内存不足时，一个或多个进程将被 OOM 杀手杀死。欲了解更多信息，请参阅说明-
+proc(5) 中的 /proc/sys/vm/overcommit_memory 和 /proc/sys/vm/oom_adj 以及 Linux 内核源文件
+Documentation/vm/overcommit-accounting.rst。
+
+通常，malloc()从堆中分配内存，并根据需要调整堆的大小，使用
+sbrk(2)。当分配大于 MMAP_THRESHOLD 字节的内存块时，glibc malloc() 实现
+使用 mmap(2) 将内存分配为私有匿名映射。MMAP_THRESHOLD 默认为 128 kB，但是
+可以使用 mallopt(3) 进行调整。在 Linux 4.7 之前，使用 mmap(2) 执行的分配不受
+RLIMIT_DATA 资源限制；从 Linux 4.7 开始，对于使用执行的分配也强制执行此限制
+映射（2）。
+
+为了避免多线程应用程序中的损坏，内部使用互斥体来保护内存管理
+这些函数使用的数据结构。在多线程应用程序中，线程同时进行
+巧妙地分配和释放内存，可能会出现对这些互斥体的争用。可扩展地处理内存分配
+在多线程应用程序中，如果存在互斥锁争用，glibc 会创建额外的内存分配区域
+检测到。每个 arena 都是由系统内部分配的一大块内存区域（使用 brk(2) 或
+mmap(2))，并使用自己的互斥体进行管理。
+
+SUSv2 需要 malloc()、calloc() 和 realloc() 在失败时将 errno 设置为 ENOMEM。Glibc 假设这
+已完成（并且这些例程的 glibc 版本执行此操作）；如果您使用私有 malloc 实现
+不设置 errno，那么某些库例程可能会失败，而 errno 中没有原因。
+
+malloc()、calloc()、realloc() 或 free() 中的崩溃几乎总是与堆损坏有关，例如
+溢出分配的块或释放同一指针两次。
+
+malloc() 实现可通过环境变量进行调整；有关详细信息，请参阅 mallopt(3)。
+
+也可以看看
+valgrind(1)、brk(2)、mmap(2)、alloca(3)、malloc_get_state(3)、malloc_info(3)、malloc_trim(3)、
+malloc_usable_size(3)、malopt(3)、mcheck(3)、mtrace(3)、posix_memalign(3)
+
+有关 GNU C 库实现的详细信息，请参阅 ⟨https://sourceware.org/glibc/wiki/MallocInternals⟩。
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。项目描述、信息
+关于报告错误以及此页面的最新版本，可以在以下位置找到
+https://www.kernel.org/doc/man-pages/。
+
+GNU 2020-06-09 MALLOC(3)
