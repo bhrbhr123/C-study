@@ -1,0 +1,68 @@
+FERROR(3) Linux 程序员手册 FERROR(3)
+
+姓名
+clearerr、feof、ferror、fileno - 检查并重置流状态
+
+概要
+#include <stdio.h>
+
+无效clearerr（文件*流）；
+
+int feof(FILE *流);
+
+int Ferr(FILE *流);
+
+int fileno(FILE *流);
+
+glibc 的功能测试宏要求（请参阅 feature_test_macros(7)）：
+
+文件号（）：_POSIX_C_SOURCE
+
+描述
+函数clearerr()清除流的文件结束和错误指示符
+由流指向。
+
+函数 feof() 测试由所指向的流的文件结束指示符
+流，如果已设置则返回非零。文件结束指示器可以被清除
+仅通过函数clearerr()。
+
+函数ferror()测试由指向的流的错误指示器
+流，如果已设置则返回非零。错误指示器只能通过以下方式重置
+Clearerr() 函数。
+
+函数 fileno() 检查参数流并返回整数文件描述符
+scriptor 用于实现此流。文件描述符仍然由
+流并将在调用 fclose(3) 时关闭。复制文件描述符
+在将其传递给可能关闭它的代码之前使用 dup(2) 。
+
+对于非锁定对应项，请参阅unlocked_stdio(3)。
+
+错误
+这些函数不应失败，也不应设置外部变量 errno。（如何-
+永远，如果 fileno() 检测到它的参数不是有效的流，它必须重新
+转 -1 并将 errno 设置为 EBADF。）
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌────────────────────┬────────────────┬──────────┐
+│接口 │属性 │值 │
+├────────────────────┼────────────────┼──────────┤
+│clearerr(), feof(), │ 线程安全 │ MT-Safe │
+│ferror(), fileno() │ │ │
+└────────────────────┴────────────────┴──────────┘
+符合
+函数clearerr()、feof() 和ferror() 符合C89、C99、POSIX.1-2001，
+和 POSIX.1-2008。
+
+函数 fileno() 符合 POSIX.1-2001 和 POSIX.1-2008。
+
+也可以看看
+打开（2），fdopen（3），stdio（3），unlocked_stdio（3）
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。的描述
+项目、有关报告错误的信息以及此页面的最新版本，
+可以在 https://www.kernel.org/doc/man-pages/ 找到。
+
+2019-03-06 铁(3)

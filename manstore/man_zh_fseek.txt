@@ -1,0 +1,81 @@
+FSEEK(3) Linux 程序员手册 FSEEK(3)
+
+姓名
+fgetpos、fseek、fsetpos、ftell、rewind - 重新定位流
+
+概要
+#include <stdio.h>
+
+int fseek(FILE *stream, 长偏移量, int 来源);
+
+长ftell（文件*流）；
+
+无效倒带（文件*流）；
+
+int fgetpos(FILE *stream, fpos_t *pos);
+
+int fsetpos(FILE *stream, const fpos_t *pos);
+
+描述
+fseek() 函数设置指向的流的文件位置指示符
+溪流。新位置（以字节为单位）是通过将偏移字节添加到
+由whence指定的位置。如果whence设置为SEEK_SET、SEEK_CUR或
+SEEK_END，偏移量相对于文件的开头，当前位置在-
+分别是指示符或文件结尾。成功调用 fseek() 函数
+清除流的文件结束指示器并撤消任何影响
+ungetc(3) 在同一流上运行。
+
+ftell() 函数获取文件位置指示符的当前值
+流指向的流。
+
+rewind() 函数设置指向的流的文件位置指示器
+流到文件的开头。它相当于：
+
+（无效）fseek（流，0L，SEEK_SET）
+
+除了流的错误指示器也被清除（参见clearerr(3)）。
+
+fgetpos() 和 fsetpos() 函数是等效于的替代接口
+ftell() 和 fseek() （其中设置为 SEEK_SET），设置并存储当前
+pos 引用的对象的文件偏移值。对一些非
+UNIX 系统中，fpos_t 对象可能是一个复杂的对象，这些例程可能是
+可移植地重新定位文本流的唯一方法。
+
+返回值
+rewind() 函数不返回任何值。成功完成后，fgetpos(),
+fseek()、fsetpos() 返回 0，ftell() 返回当前偏移量。否则，-1
+返回并设置 errno 以指示错误。
+
+错误
+EINVAL fseek() 的whence 参数不是SEEK_SET、SEEK_END 或SEEK_CUR。或者：
+结果文件偏移量将为负。
+
+ESPIPE 流下的文件描述符是不可查找的（例如，它引用一个
+管道、FIFO 或套接字）。
+
+函数 fgetpos()、fseek()、fsetpos() 和 ftell() 也可能失败并设置 er‐
+rno 表示为例程 fflush(3)、fstat(2)、lseek(2) 指定的任何错误
+和 malloc(3)。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌────────────────────────────┬────────────────┬──── ──────┐
+│接口 │属性 │值 │
+├────────────────────────────┼────────────────┼──── ──────┤
+│fseek(), ftell(), rewind(), │ 线程安全 │ MT 安全 │
+│fgetpos(), fsetpos() │ │ │
+└────────────────────────────┴────────────────┴──── ──────┘
+
+符合
+POSIX.1-2001、POSIX.1-2008、C89、C99。
+
+也可以看看
+lseek(2)、fseeko(3)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。的描述
+项目、有关报告错误的信息以及此页面的最新版本，
+可以在 https://www.kernel.org/doc/man-pages/ 找到。
+
+GNU 2018-04-30 FSEEK(3)

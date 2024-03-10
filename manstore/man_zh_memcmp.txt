@@ -1,0 +1,54 @@
+MEMCMP(3) Linux 程序员手册 MEMCMP(3)
+
+姓名
+memcmp - 比较内存区域
+
+概要
+#include <字符串.h>
+
+int memcmp(const void *s1, const void *s2, size_t n);
+
+描述
+memcmp() 函数比较前 n 个字节（每个字节解释为无符号
+char) 存储区域 s1 和 s2。
+
+返回值
+memcmp() 函数返回小于、等于或大于零的整数
+如果发现 s1 的前 n 个字节分别小于、匹配或为
+大于 s2 的前 n 个字节。
+
+对于非零返回值，符号由差值的符号确定
+s1 中不同的第一对字节（解释为 unsigned char）之间
+和s2。
+
+如果 n 为零，则返回值为零。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌──────────┬──────────────┬──────────┐
+│接口 │属性 │值 │
+├──────────┼────────────────┼──────────┤
+│memcmp() │ 线程安全 │ MT-Safe │
+└──────────┴────────────────┴──────────┘
+符合
+POSIX.1-2001、POSIX.1-2008、C89、C99、SVr4、4.3BSD。
+
+笔记
+不要使用 memcmp() 来比较安全关键数据，例如密码学数据
+crets，因为所需的 CPU 时间取决于相等字节的数量。在-
+相反，需要一个在恒定时间内执行比较的函数。一些OP-
+计费系统提供了这样的函数（例如，NetBSD 的 consttime_memequal()），但是
+POSIX 中没有指定这样的函数。在Linux上，可能需要实现
+自己有这样的功能。
+
+也可以看看
+bcmp(3)、bstring(3)、strcasecmp(3)、strcmp(3)、strcoll(3)、strncasecmp(3)、
+strncmp(3)、wmemcmp(3)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。的描述
+项目、有关报告错误的信息以及此页面的最新版本，
+可以在 https://www.kernel.org/doc/man-pages/ 找到。
+
+2017-09-15 MEMCMP(3)

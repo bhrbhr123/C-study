@@ -1,0 +1,68 @@
+PUTS(3) Linux 程序员手册 PUTS(3)
+
+姓名
+fputc、fputs、putc、putchar、puts - 字符和字符串的输出
+
+概要
+#include <stdio.h>
+
+int fputc(int c, FILE *stream);
+
+int fputs(const char *s, FILE *stream);
+
+int putc(int c, FILE *stream);
+
+int putchar(int c);
+
+int put(const char *s);
+
+描述
+fputc() 将字符 c 写入流，转换为无符号字符。
+
+fputs() 将字符串 s 写入流，不带终止空字节 ('\0')。
+
+putc() 与 fputc() 等效，只是它可以作为宏来实现，
+多次评估流。
+
+putchar(c) 相当于 putc(c, stdout)。
+
+put() 将字符串 s 和尾随换行符写入 stdout。
+
+对此处描述的函数的调用可以相互混合，也可以与调用混合
+到 stdio 库中的其他输出函数以获取相同的输出流。
+
+对于非锁定对应项，请参阅unlocked_stdio(3)。
+
+返回值
+fputc()、putc() 和 putchar() 返回以 unsigned char 形式写入的字符
+出错时转换为 int 或 EOF。
+
+puts() 和 fputs() 在成功时返回一个非负数，在错误时返回 EOF。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌──────────────────────────┬────────────────┬────── ────┐
+│接口 │属性 │值 │
+├──────────────────────────┼────────────────┼────── ────┤
+│fputc(), fputs(), putc(), │ 线程安全 │ MT 安全 │
+│putchar()、puts() │ │ │
+└──────────────────────────┴────────────────┴────── ────┘
+符合
+POSIX.1-2001、POSIX.1-2008、C89、C99。
+
+错误
+不建议将 stdio 库中的输出函数的调用与
+对与同一输出关联的文件描述符的 write(2) 进行低级调用
+溪流; 结果将是不确定的，并且很可能不是您想要的。
+
+也可以看看
+写（2），ferror（3），fgets（3），fopen（3），fputwc（3），fputws（3），fseek（3），fwrite（3），
+putwchar(3)、scanf(3)、unlocked_stdio(3)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。的描述
+项目、有关报告错误的信息以及此页面的最新版本，
+可以在 https://www.kernel.org/doc/man-pages/ 找到。
+
+GNU 2020-12-21 放置(3)

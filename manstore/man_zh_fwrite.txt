@@ -1,0 +1,102 @@
+FREAD(3) Linux 程序员手册 FREAD(3)
+
+姓名
+fread、fwrite - 二进制流输入/输出
+
+概要
+#include <stdio.h>
+
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+
+size_t fwrite(const void *ptr, size_t 大小, size_t nmemb,
+文件*流）；
+
+描述
+函数 fread() 从以下位置读取 nmemb 数据项，每个大小为字节长
+Stream 指向的流，将它们存储在 ptr 指定的位置。
+
+函数 fwrite() 将 nmemb 数据项（每个大小字节长）写入
+Stream 指向的流，从 ptr 给出的位置获取它们。
+
+对于非锁定对应项，请参阅unlocked_stdio(3)。
+
+返回值
+成功后，fread() 和 fwrite() 返回读取或写入的项目数。这
+仅当 size 为 1 时，number 才等于传输的字节数。如果发生错误
+curs，或到达文件末尾，返回值是短项目计数（或
+零）。
+
+流的文件位置指示器按字节数提前
+顺利地阅读或写作。
+
+fread() 不区分文件结束和错误，调用者必须使用
+feof(3) 和ferror(3) 来确定发生了哪一个。
+
+属性
+有关本节中使用的术语的解释，请参阅 attribute(7)。
+
+┌──────────────────┬────────────────┬──────────┐
+│接口 │属性 │值 │
+├──────────────────┼────────────────┼──────────┤
+│fread(), fwrite() │ 线程安全 │ MT 安全 │
+└──────────────────┴────────────────┴──────────┘
+符合
+POSIX.1-2001、POSIX.1-2008、C89。
+
+例子
+下面的程序通过解析 /bin/sh ELF 可执行文件演示了 fread() 的使用
+以二进制模式并打印其魔法和类：
+
+$ ./a.out
+ELF魔法：0x7f454c46
+类别：0x02
+
+节目来源
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+
+整数
+主要（空）
+{
+文件 *fp = fopen("/bin/sh", "rb");
+如果（！fp）{
+错误（“fopen”）；
+返回 EXIT_FAILURE；
+}
+
+无符号字符缓冲区[4]；
+
+size_t ret = fread(buffer, ARRAY_SIZE(buffer), sizeof(*buffer), fp);
+if (ret != sizeof(*buffer)) {
+fprintf(stderr, "fread() 失败: %zu\n", ret);
+退出（EXIT_FAILURE）；
+}
+
+printf("ELF 魔法: %#04x%02x%02x%02x\n", buffer[0], buffer[1],
+缓冲区[2]，缓冲区[3]）；
+
+ret = fread(缓冲区, 1, 1, fp);
+如果（ret！= 1）{
+fprintf(stderr, "fread() 失败: %zu\n", ret);
+退出（EXIT_FAILURE）；
+}
+
+printf("类: %#04x\n", buffer[0]);
+
+fclose(fp);
+
+退出（EXIT_SUCCESS）；
+}
+
+也可以看看
+读取 (2)、写入 (2)、feof(3)、ferror(3)、unlocked_stdio(3)
+
+版画
+本页是 Linux 手册页项目 5.10 版的一部分。的描述
+项目、有关报告错误的信息以及此页面的最新版本，
+可以在 https://www.kernel.org/doc/man-pages/ 找到。
+
+GNU 2020-08-13 FREAD(3)
